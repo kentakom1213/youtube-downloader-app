@@ -5,6 +5,12 @@ from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
 
 
+AUDIO_EXT = "m4a"
+VIDEO_EXT = "mp4"
+AUDIO_FORMAT = "m4a/bestaudio/best"
+VIDEO_FORMAT = "mp4/bestaudio/360p"
+
+
 def handle_error(inner_func):
     """例外処理を行う
     """
@@ -42,14 +48,15 @@ class ErrorLogger:
         self.log = ""
 
     def debug(self, msg):
+        print(msg)
         if "has already been downloaded" in msg:
             self.log = "ファイルが既に存在します"
 
     def warning(self, msg):
-        pass
+        print(msg)
 
     def error(self, msg):
-        pass
+        print(msg)
 
 
 @handle_error
@@ -60,8 +67,8 @@ def download(query: dict, progress_bar_update=None, logger=None):
 
     # ダウンロードオプション
     ydl_opts = {
-        "format": "m4a/bestaudio/best" if is_audio else "best",
-        "outtmpl": f"{ddir}/%(title)s.%(ext)s",
+        "format": AUDIO_FORMAT if is_audio else VIDEO_FORMAT,
+        "outtmpl": f"{ddir}/%(title)s.{AUDIO_EXT if is_audio else VIDEO_EXT}",
         "progress_hooks": [progress_bar_update] if progress_bar_update else [],
     }
 
