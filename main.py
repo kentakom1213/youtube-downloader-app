@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 
 from downloader import download
 
+# レイアウト
 layout = [
     [sg.Text("YouTubeダウンローダー")],
     [sg.Text("↓ ダウンロードしたい動画のURL")],
@@ -12,12 +13,14 @@ layout = [
     ],
     [sg.FolderBrowse("保存先フォルダ", key="ddir"), sg.Text(key="ddir")],
     [sg.Button("ダウンロード"), sg.Button("Cancel")],
+    [sg.Text("↓ ダウンロード状況")],
+    [sg.ProgressBar(100, key="PROGRESS_BAR"),]
 ]
 
-# Create the Window
+# ウィンドウの生成
 window = sg.Window("YouTubeダウンローダー", layout)
 
-# Event Loop to process "events" and get the "values" of the inputs
+# イベントループ
 while True:
     event, values = window.read()
 
@@ -25,8 +28,13 @@ while True:
         print("ダウンロード開始")
         print(values)
 
+        # プログレスバー描画用の関数
+        def progress_bar_update(d: dict):
+            percent = round(d["downloaded_bytes"] / d["total_bytes"] * 100)
+            window["PROGRESS_BAR"].update(percent)
+
         try:
-            download(values)
+            download(values, progress_bar_update)
         except Exception as e:
             print(type(e))
             sg.popup_error(str(e), title="エラー")
