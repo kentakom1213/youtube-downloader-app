@@ -13,7 +13,7 @@ layout = [
     ],
     [sg.FolderBrowse("保存先フォルダ", key="ddir"), sg.Text(key="ddir")],
     [sg.Button("ダウンロード"), sg.Button("Cancel")],
-    [sg.Text("↓ ダウンロード状況")],
+    [sg.Text("\n↓ ダウンロード状況")],
     [sg.ProgressBar(100, key="PROGRESS_BAR"),]
 ]
 
@@ -30,6 +30,11 @@ while True:
 
         # プログレスバー描画用の関数
         def progress_bar_update(d: dict):
+            if d["downloaded_bytes"] == d["total_bytes"] and d["status"] == "finished":
+                sg.popup_ok("ダウンロードが完了しました", title="完了")
+                window["PROGRESS_BAR"].update(0)
+                return
+
             percent = round(d["downloaded_bytes"] / d["total_bytes"] * 100)
             window["PROGRESS_BAR"].update(percent)
 
